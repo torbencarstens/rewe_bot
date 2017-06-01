@@ -75,11 +75,18 @@ def get():
     outer_products = get_products_outer(soup)
 
     # noinspection PyTypeChecker
-    products = list(set(get_products(outer_products)))
+    products = list(get_products(outer_products))
     products.sort(key=lambda product: product["price"])
     # print(products)
     # noinspection PyTypeChecker
-    return get_acceptable_offers(products)
+    acceptables = list(get_acceptable_offers(products))
+    products_dict = {}
+
+    for acceptable in acceptables:
+        if not products_dict.get(acceptable['name'], None):
+            products_dict[acceptable['name']] = acceptable['price']
+
+    return products_dict
 
 if __name__ == "__main__":
     # noinspection PyTypeChecker

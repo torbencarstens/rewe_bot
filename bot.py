@@ -11,15 +11,15 @@ def get_token(filename: str = "secrets.json"):
 
 def offers(bot, update):
     l = []
-    for offer in get():
-        l.append("[{}] {}".format(*offer.values()))
 
+    for name, price in get().items():
+        l.append("[{}] {}".format(price, name))
+
+    print(l)
     bot.sendMessage(chat_id=update.message.chat_id, text="\n".join(l))
 
 
 def start(token: str):
-    bot = telegram.Bot(token)
-
     updater = Updater(token=token)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("list", offers))
