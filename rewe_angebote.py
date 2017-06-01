@@ -75,7 +75,7 @@ def get():
     outer_products = get_products_outer(soup)
 
     # noinspection PyTypeChecker
-    products = list(get_products(outer_products))
+    products = list(set(get_products(outer_products)))
     products.sort(key=lambda product: product["price"])
     # print(products)
     # noinspection PyTypeChecker
