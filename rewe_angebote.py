@@ -1,6 +1,6 @@
 from offers import OffersWebsite
 from wanted import WantedProducts
-from typing import Dict, Set
+from typing import Dict
 
 
 def get_acceptable_offers(*, market_id: str, wanted_filename: str) -> Dict[str, float]:
@@ -18,9 +18,3 @@ def get_acceptable_offers(*, market_id: str, wanted_filename: str) -> Dict[str, 
 def get(*, market_id, wanted_filename):
     # noinspection PyTypeChecker
     return get_acceptable_offers(market_id=market_id, wanted_filename=wanted_filename)
-
-
-if __name__ == "__main__":
-    # noinspection PyTypeChecker
-    for offer in get():
-        print("[{}] {}".format(*offer.values()))
