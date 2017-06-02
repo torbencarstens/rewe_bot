@@ -5,33 +5,6 @@ import requests
 from typing import Dict, List, Union
 
 
-class OffersWebsite:
-    def __init__(self, market_id: str, *, base_url=None):
-        if not base_url:
-            base_url = "https://www.rewe.de/angebote/?marketChosen="
-
-        self.url = "/".join([base_url, market_id])
-
-    def get_content(self) -> Union[bytes, str]:
-        req = requests.get(self.url)
-        if req.ok:
-            return req.content
-
-        raise ConnectionError("Couldn't read data from {}: {}".format(self.url, req.reason))
-
-    @staticmethod
-    def soupify_html(content: str) -> BeautifulSoup:
-        root_soup = BeautifulSoup(content, "html.parser")
-
-        return root_soup.find_all(class_="controller product")
-
-    def get_offers(self) -> List[Offer]:
-        content = self.get_content()
-        outer_soup_products = self.soupify_html(content)
-
-        return [Offer(soup) for soup in outer_soup_products]
-
-
 class Offer:
     def __init__(self, outer_soup: Tag):
         self.soup: Tag = outer_soup.find(class_="dotdot").find("div")
@@ -69,3 +42,30 @@ class Offer:
         :return: Dict[{"name", "price"}, ...]
         """
         return {"name": self.get_name(), "price": self.get_price()}
+
+
+class OffersWebsite:
+    def __init__(self, market_id: str, *, base_url=None):
+        if not base_url:
+            base_url = "https://www.rewe.de/angebote/?marketChosen="
+
+        self.url = "/".join([base_url, market_id])
+
+    def get_content(self) -> Union[bytes, str]:
+        req = requests.get(self.url)
+        if req.ok:
+            return req.content
+
+        raise ConnectionError("Couldn't read data from {}: {}".format(self.url, req.reason))
+
+    @staticmethod
+    def soupify_html(content: str) -> BeautifulSoup:
+        root_soup = BeautifulSoup(content, "html.parser")
+
+        return root_soup.find_all(class_="controller product")
+
+    def get_offers(self) -> List[Offer]:
+        content = self.get_content()
+        outer_soup_products = self.soupify_html(content)
+
+        return [Offer(soup) for soup in outer_soup_products]
