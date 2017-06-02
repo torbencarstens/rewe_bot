@@ -3,7 +3,7 @@ from wanted import WantedProducts
 from typing import Dict, Set
 
 
-def get_acceptable_offers(*, market_id: str, wanted_filename: str) -> Set[Dict[str, float]]:
+def get_acceptable_offers(*, market_id: str, wanted_filename: str) -> Dict[str, float]:
     acceptable_offers_mappings = WantedProducts(wanted_filename).get_all_mappings()
     offers = OffersWebsite(market_id).get_offers()
     products = {}
