@@ -1,0 +1,406 @@
+{
+  "products": [
+    {
+      "Wagner Pizza": {
+        "id": 0,
+        "mappings": [
+          "wagner",
+          "wagnerpizza",
+          "steinofen"
+        ]
+      }
+    },
+    {
+      "Barilla Nudeln": {
+        "id": 1,
+        "mappings": [
+          "barilla",
+          "barillanudeln",
+          "nudeln"
+        ]
+      }
+    },
+    {
+      "Berentzen": {
+        "id": 2,
+        "mappings": [
+          "berentzen",
+          "berenzen",
+          "saurer"
+        ]
+      }
+    },
+    {
+      "Gude": {
+        "id": 27,
+        "mappings": [
+          "gude"
+        ],
+        "specials": {
+          "Kasten Gude": {
+            "id": 3,
+            "mappings": [
+              "kasten",
+              "kiste"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "Braustübl": {
+        "id": 28,
+        "mappings": [
+          "braustuebl",
+          "braustubl",
+          "braustübl"
+        ],
+        "specials": {
+          "Kasten Braustübl": {
+            "id": 4,
+            "mappings": [
+              "kasten",
+              "kiste"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "Flensburger": {
+        "id": 26,
+        "mappings": [
+          "flensburger",
+          "flens"
+        ],
+        "specials": {
+          "Kasten Flens": {
+            "id": 5,
+            "mappings": [
+              "kasten",
+              "kiste"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "Beck's": {
+        "id": 29,
+        "mappings": [
+          "becks",
+          "beck's",
+          "beck´s",
+          "beck`s"
+        ],
+        "specials": {
+          "Kasten Beck's": {
+            "id": 6,
+            "mappings": [
+              "kasten",
+              "kiste"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "Jacobs Kaffee (normal)": {
+        "id": 7,
+        "mappings": [
+          "jacobs",
+          "jacob's"
+        ],
+        "specials": {
+          "Jacobs Pads": {
+            "id": 11,
+            "mappings": [
+              "pad"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "Melitta Kaffe (normal)": {
+        "id": 8,
+        "mappings": [
+          "melitta",
+          "melita"
+        ],
+        "specials": {
+          "Melitta Pads": {
+            "id": 22,
+            "mappings": [
+              "pad"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "Senseo Pads": {
+        "id": 9,
+        "mappings": [
+          "senseo",
+          "senseo-pad",
+          "senseopad",
+          "senseo-pads",
+          "senseopads"
+        ]
+      }
+    },
+    {
+      "Dallmayr": {
+        "id": 10,
+        "mappings": [
+          "dallmayr",
+          "dalmayr",
+          "dallmayer"
+        ]
+      }
+    },
+    {
+      "Rewe Kaffee (normal)": {
+        "id": 12,
+        "mappings": [
+          "rewe",
+          "beste",
+          "wahl"
+        ],
+        "specials": {
+          "Rewe Pads": {
+            "id": 23,
+            "mappings": [
+              "pad"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "Berner": {
+        "id": 13,
+        "mappings": [
+          "berner",
+          "berner-würstchen",
+          "berner-wurst",
+          "bacon-würstchen"
+        ]
+      }
+    },
+    {
+      "Havana": {
+        "id": 14,
+        "mappings": [
+          "havana",
+          "havanna",
+          "club"
+        ]
+      }
+    },
+    {
+      "Captain Morgan": {
+        "id": 15,
+        "mappings": [
+          "captain",
+          "morgan"
+        ]
+      }
+    },
+    {
+      "Korn": {
+        "id": 16,
+        "mappings": [
+          "korn",
+          "strothmann"
+        ]
+      }
+    },
+    {
+      "Big Pizza": {
+        "id": 17,
+        "mappings": [
+          "big",
+          "bp"
+        ]
+      }
+    },
+    {
+      "Ristorante Pizza": {
+        "id": 18,
+        "mappings": [
+          "ristorante"
+        ]
+      }
+    },
+    {
+      "Ofenfrische": {
+        "id": 19,
+        "mappings": [
+          "ofenfrische"
+        ]
+      }
+    },
+    {
+      "Haribo": {
+        "id": 20,
+        "mappings": [
+          "haribo"
+        ]
+      }
+    },
+    {
+      "Kasten Cola": {
+        "id": 21,
+        "mappings": [
+          "cola",
+          "cola-mix",
+          "cola-misch",
+          "cola-misch-kasten",
+          "cola-misch-kiste"
+        ]
+      }
+    },
+    {
+      "Bacardi": {
+        "id": 25,
+        "mappings": [
+          "bacardi",
+          "oakheart"
+        ],
+        "specials": {
+          "Bacardi Oakheart": {
+            "id": 24,
+            "mappings": [
+              "oakheart"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "Krombacher": {
+        "id": 30,
+        "mappings": [
+          "Krombacher"
+        ],
+        "specials": {
+          "Kasten Krombacher": {
+            "id": 31,
+            "mappings": [
+              "Kasten",
+              "Kiste"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "Absolut Vodka": {
+        "id": 32,
+        "mappings": [
+          "absolut"
+        ]
+      }
+    },
+    {
+      "Pringles": {
+        "id": 33,
+        "mappings": [
+          "pringles",
+          "pringels"
+        ]
+      }
+    },
+    {
+      "Hackfleisch": {
+        "id": 34,
+        "mappings": [
+          "hack",
+          "hackfleisch"
+        ],
+        "specials": {
+          "ja! Hackfleisch": {
+            "id": 35,
+            "mappings": [
+              "ja",
+              "ja!"
+            ],
+            "specials": {
+              "250g ja! Hack": {
+                "id": 36,
+                "mappings": [
+                  "250g"
+                ]
+              },
+              "500g ja! Hack": {
+                "id": 37,
+                "mappings": [
+                  "500g"
+                ]
+              }
+            }
+          },
+          "WB Hackfleisch": {
+            "id": 38,
+            "mappings": [
+              "wb",
+              "wilhelm",
+              "willhelm",
+              "brandenburg"
+            ],
+            "specials": {
+              "250g WB Hack": {
+                "id": 39,
+                "mappings": [
+                  "250g"
+                ]
+              },
+              "500g WB Hack": {
+                "id": 40,
+                "mappings": [
+                  "500g"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "Miree Frischkäse": {
+        "id": 41,
+        "mappings": [
+          "miree",
+          "mire"
+        ]
+      }
+    },
+    {
+      "Frosta Pfannengerichte": {
+        "id": 42,
+        "mappings": [
+          "frosta"
+        ]
+      }
+    },
+    {
+      "Bistro Pizzabaguettes": {
+        "id": 43,
+        "mappings": [
+          "bistro",
+          "pizzabaguette"
+        ]
+      }
+    },
+    {
+      "Bresso Frischkäse": {
+        "id": 44,
+        "mappings": [
+          "bresso"
+        ]
+      }
+    }
+  ]
+}
