@@ -10,23 +10,36 @@ class User:
     base = "resources"
     market_id = None
 
-    def __init__(self, id: int):
+    def __init__(self, id: int, market_id: str = None):
         """
         :param id: int
         """
         self.id = id
         self.s3 = s3.S3(self)
         self.filename = self.s3.get_local_filepath(directory=self.base)
+        self._read()
         self.products = self.get_wanted_products()
+        if not os.path.exists(self.filename):
+            self._create_empty()
         self.market_id = self.get_market_id()
 
         if not self.s3.exists():
             self._upload()
 
+    def add_market_id(self, market_id):
+        self.market_id = market_id
+
     def get_market_id(self):
+        """
+        Returns empty market_id if file has no `market_id`/is non existent
+        :return: 
+        """
         if self.market_id:
             return self.market_id
-        return self._read()['market_id']
+        try:
+            return self._read()['market_id']
+        except (KeyError, OSError):
+            return ""
 
     def get_wanted_products(self) -> List[WantedProduct]:
         if os.path.exists(self.filename):
