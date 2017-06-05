@@ -11,7 +11,7 @@ class Offer:
     price = None
 
     def __init__(self, outer_soup: Tag):
-        self.outer_soup = outer_souprewe
+        self.outer_soup = outer_soup
         self.soup: Tag = outer_soup.find(class_="dotdot").find("div")
         self.name: str = self.get_name()
         self.price: float = self.get_price()
