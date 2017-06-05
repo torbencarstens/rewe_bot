@@ -9,6 +9,7 @@ from .wanted import WantedProduct, WantedProducts
 
 class User:
     base = "resources"
+    market_id = None
 
     def __init__(self, id: int):
         """
@@ -18,6 +19,12 @@ class User:
         self.products = self.get_wanted_products()
         self.s3 = S3(self)
         self.filename = self.s3.get_local_filepath(directory=self.base)
+        self.market_id = self.get_market_id()
+
+    def get_market_id(self):
+        if self.market_id:
+            return self.market_id
+        return self._read()['market_id']
 
     def get_wanted_products(self) -> List[WantedProduct]:
         if os.path.exists(self.filename):
