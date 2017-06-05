@@ -8,11 +8,11 @@ setup(
     license='MIT',
     author='chabare',
     author_email='chabare95@gmail.com',
-    description=''
+    description='',
 
-    entry_points = {
+    entry_points={
         "": [
             "rewe_bot = rewe_bot.__main__:main",
         ],
-    }
+    },
 )
