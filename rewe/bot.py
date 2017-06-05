@@ -26,7 +26,9 @@ def get_user(bot, update) -> User:
             user = i_user
             break
 
-    user = User(chat_id)
+    if not user:
+        user = User(chat_id)
+        users.append(user)
 
     return user
 
