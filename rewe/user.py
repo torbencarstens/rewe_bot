@@ -20,6 +20,12 @@ class User:
         self.products = self.get_wanted_products()
         self.market_id = self.get_market_id()
 
+        if not self.s3.exists():
+            print("does not exist")
+            self._upload()
+        else:
+            print("does exist")
+
     def get_market_id(self):
         if self.market_id:
             return self.market_id
@@ -34,6 +40,9 @@ class User:
 
     def add_offer(self, product: WantedProduct):
         self.products.append(product)
+        # TODO: do this in a certain interval
+        self._write()
+        self._upload()
 
     def _write(self) -> None:
         with open(self.filename, "w") as resource:
