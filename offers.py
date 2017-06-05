@@ -11,14 +11,10 @@ class Offer:
     price = None
 
     def __init__(self, outer_soup: Tag):
-        try:
-            self.outer_soup = outer_soup
-            self.soup: Tag = outer_soup.find(class_="dotdot").find("div")
-            self.name: str = self.get_name()
-            self.price: float = self.get_price()
-        except:
-            e = "Test"
-            print("E: {}".format(e))
+        self.outer_soup = outer_soup
+        self.soup: Tag = outer_soup.find(class_="dotdot").find("div")
+        self.name: str = self.get_name()
+        self.price: float = self.get_price()
 
     def get_price(self) -> float:
         if self.price:
