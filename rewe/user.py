@@ -48,6 +48,10 @@ class User:
         else:
             return []
 
+    def _create_empty(self):
+        with open(self.filename, "w") as empty:
+            json.dump({"market_id": "", "products": []}, empty)
+
     def add_offer(self, product: WantedProduct):
         self.products.append(product)
         # TODO: do this in a certain interval
