@@ -2,7 +2,8 @@ import json
 import os
 from typing import List, Dict
 
-from wanted import WantedProduct, WantedProducts
+from . import wanted
+from .wanted import WantedProduct, WantedProducts
 
 
 class User:
@@ -27,9 +28,9 @@ class User:
         self.products.append(product)
 
     def _write(self) -> None:
-        with open(self.filename, "w+") as resource:
-            json.dump("", resource)
+        with open(self.filename, "w") as resource:
+            json.dump(wanted.to_json(self.products), resource)
 
     def _read(self) -> Dict:
-        with open(self.filename, "w+") as resource:
+        with open(self.filename, "r") as resource:
             return json.load(resource)

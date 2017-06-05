@@ -1,5 +1,5 @@
-from offers import OffersWebsite
-from wanted import WantedProducts
+from .offers import OffersWebsite
+from .wanted import WantedProducts
 from typing import Dict
 
 

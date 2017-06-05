@@ -35,3 +35,15 @@ class WantedProduct:
         :return: Dict[{"name", "mappings"}, [...]]
         """
         return {"name": self.get_name(), "mappings": self.get_mappings()}
+
+    def to_json(self) -> Dict[str, Union[str, List[str]]]:
+        return self.get()
+
+
+def to_json(products: List[WantedProduct]) -> Dict[str, Union[str, List[str]]]:
+    json_products = {'products': []}
+
+    for product in products:
+        json_products['products'].append(product.to_json())
+
+    return json_products
