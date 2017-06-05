@@ -101,6 +101,10 @@ def set_market_id(bot: Bot, update):
         user.add_market_id(market_id)
 
 
+def status(bot: Bot, update):
+    bot.send_message(chat_id=update.message.chat_id, text="Functional")
+
+
 def run(token: str):
     updater = Updater(token=token)
     dispatcher = updater.dispatcher
@@ -109,6 +113,7 @@ def run(token: str):
     dispatcher.add_handler(CommandHandler("list_wanted", list_wanted))
     dispatcher.add_handler(CommandHandler("is_offer", is_offer))
     dispatcher.add_handler(CommandHandler("set_market_id", set_market_id))
+    dispatcher.add_handler(CommandHandler("status", status))
 
     updater.start_polling()
 
