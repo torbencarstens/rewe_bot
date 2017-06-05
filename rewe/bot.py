@@ -11,7 +11,7 @@ from .user import User
 from .wanted import WantedProducts
 
 users = []
-log = Logger("bot")
+log = Logger("bot", level="DEBUG")
 
 
 def get_token(filename: str = "secrets.json"):
