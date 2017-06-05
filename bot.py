@@ -1,8 +1,10 @@
 import json
 
+import telegram
 from telegram.bot import Bot
 from telegram.ext import CommandHandler, Updater
 
+from offers import OffersWebsite
 from rewe_offers import get
 from wanted import WantedProducts
 
@@ -12,12 +14,13 @@ def get_token(filename: str = "secrets.json"):
         return json.load(secrets)['token']
 
 
-def offers(bot: Bot, update):
-    # TODO: Add markdown
-    def _get_product_printable(name: str, price: float):
-        bold_price = "**{}**".format(price)
-        return "[{}] {}".format(bold_price, name)
+# TODO: Add markdown
+def _get_product_printable(name: str, price: float):
+    bold_price = "*{}*".format(price)
+    return "\[{}] {}".format(bold_price, name)
 
+
+def offers(bot: Bot, update):
     products = []
 
     market_id = "1487799323156"
@@ -25,21 +28,37 @@ def offers(bot: Bot, update):
     for name, price in get(market_id=market_id, wanted_filename=wanted_filename).items():
         products.append(_get_product_printable(name, price))
 
-    bot.send_message(chat_id=update.message.chat_id, text="\n".join(products))
+    bot.send_message(chat_id=update.message.chat_id, text="\n".join(products), parse_mode=telegram.ParseMode.MARKDOWN)
+
+
+def list_all(bot: Bot, update):
+    print("list_all")
+    products = []
+
+    market_id = "1487799323156"
+    offers = OffersWebsite(market_id).get_offers()
+    for offer in offers:
+        name, price = offer.get().values()
+        products.append(_get_product_printable(name, price))
+
+    bot.send_message(chat_id=update.message.chat_id, text="\n".join(products), parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 def list_wanted(bot: Bot, update):
+    print("list_wanted")
     wanted_filename = "wanted.json"
     wanted_products = WantedProducts(wanted_filename).get_products()
-
+    print(wanted_products)
     bot.send_message(chat_id=update.message.chat_id,
-                     text="\n".join([product.get_name() for product in wanted_products]))
+                     text="\n".join([product.get_name() for product in wanted_products]),
+                     parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 def run(token: str):
     updater = Updater(token=token)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("list", offers))
+    dispatcher.add_handler(CommandHandler("list_all", list_all))
     dispatcher.add_handler(CommandHandler("list_wanted", list_wanted))
 
     updater.start_polling()

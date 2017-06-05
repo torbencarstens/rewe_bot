@@ -1,20 +1,29 @@
+import re
+from typing import Dict, List, Union
+
+import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
-import re
-import requests
-from typing import Dict, List, Union
 
 
 class Offer:
+    name = None
+    price = None
+
     def __init__(self, outer_soup: Tag):
-        self.soup: Tag = outer_soup.find(class_="dotdot").find("div")
-        self.name: str = self.get_name()
-        self.price: float = self.get_price()
+        try:
+            self.outer_soup = outer_soup
+            self.soup: Tag = outer_soup.find(class_="dotdot").find("div")
+            self.name: str = self.get_name()
+            self.price: float = self.get_price()
+        except:
+            e = "Test"
+            print("E: {}".format(e))
 
     def get_price(self) -> float:
         if self.price:
             return self.price
-        price_text = self.soup.find(class_="price").text
+        price_text = self.outer_soup.find(class_="price").text
         price = re.findall(r"\d+.*", price_text)[0]
 
         return float(price)
@@ -29,7 +38,7 @@ class Offer:
         return single_whitespace_name
 
     def get_picture_link(self) -> str:
-        return self.soup.find('img')['href']
+        return self.outer_soup.find('img')['href']
 
     def get_picture(self) -> Union[bytes, str]:
         link = self.get_picture_link()

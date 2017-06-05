@@ -5,9 +5,9 @@ from typing import Dict, List, Union
 
 class WantedProduct:
     def __init__(self, item: Dict):
-        for name, value in item.items():
-            self.name = name
-            self.mappings = value['mapping']
+        self.id = item['id']
+        self.name = item['name']
+        self.mappings = item['mappings']
 
     def get_mappings(self) -> List[str]:
         return self.mappings
@@ -29,10 +29,11 @@ class WantedProduct:
 class WantedProducts:
     def __init__(self, filename: str):
         with codecs.open(filename, "r+", "utf-8") as wanted:
-            self.wanted = json.load(wanted)
+            self.wanted = json.load(wanted)['products']
 
     def get_products(self) -> List[WantedProduct]:
-        return [WantedProduct(item) for item in self.wanted]
+        products = [WantedProduct(item) for item in self.wanted]
+        return products
 
     def get_all_mappings(self) -> List[str]:
         complete_list = [product.get_mappings() for product in self.get_products()]
