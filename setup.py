@@ -9,4 +9,10 @@ setup(
     author='chabare',
     author_email='chabare95@gmail.com',
     description=''
+
+    entry_points = {
+        "": [
+            "rewe_bot = rewe_bot.__main__:main",
+        ],
+    }
 )
