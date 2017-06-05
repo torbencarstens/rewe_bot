@@ -59,11 +59,18 @@ class User:
         self._upload()
 
     def _write(self) -> None:
+        products = wanted.to_json(self.products)
+        market_id = self.market_id
+        complete = {}
+        complete.update(products)
+        complete.update(market_id)
+
         with open(self.filename, "w") as resource:
-            json.dump(wanted.to_json(self.products), resource)
+            json.dump(complete, resource)
 
     def _upload(self, *, base_directory: str = None):
-        self.s3.upload(directory=base_directory)
+        if self.market_id or self.products:
+            self.s3.upload(directory=base_directory)
 
     def _download(self, *, base_directory: str = None):
         self.s3.download(directory=base_directory)
