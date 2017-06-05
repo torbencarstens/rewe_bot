@@ -32,7 +32,6 @@ def offers(bot: Bot, update):
 
 
 def list_all(bot: Bot, update):
-    print("list_all")
     products = []
 
     market_id = "1487799323156"
@@ -44,11 +43,30 @@ def list_all(bot: Bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="\n".join(products), parse_mode=telegram.ParseMode.MARKDOWN)
 
 
+def is_offer(bot: Bot, update):
+    wanted_product = " ".join(update.message.text.split()[1:])
+    if not wanted_product:
+        bot.send_message(chat_id=update.message.chat_id, text="How about specifying a product?",
+                         parse_mode=telegram.ParseMode.MARKDOWN)
+    market_id = "1487799323156"
+
+    found = False
+    for offer in OffersWebsite(market_id).get_offers():
+        name, price = offer.get().values()
+        if wanted_product in name.lower():
+            found = True
+            bot.send_message(chat_id=update.message.chat_id, text=_get_product_printable(name, price),
+                             parse_mode=telegram.ParseMode.MARKDOWN)
+            break
+
+    if not found:
+        bot.send_message(chat_id=update.message.chat_id, text="No",
+                         parse_mode=telegram.ParseMode.MARKDOWN)
+
+
 def list_wanted(bot: Bot, update):
-    print("list_wanted")
     wanted_filename = "wanted.json"
     wanted_products = WantedProducts(wanted_filename).get_products()
-    print(wanted_products)
     bot.send_message(chat_id=update.message.chat_id,
                      text="\n".join([product.get_name() for product in wanted_products]),
                      parse_mode=telegram.ParseMode.MARKDOWN)
@@ -60,6 +78,7 @@ def run(token: str):
     dispatcher.add_handler(CommandHandler("list", offers))
     dispatcher.add_handler(CommandHandler("list_all", list_all))
     dispatcher.add_handler(CommandHandler("list_wanted", list_wanted))
+    dispatcher.add_handler(CommandHandler("is_offer", is_offer))
 
     updater.start_polling()
 
