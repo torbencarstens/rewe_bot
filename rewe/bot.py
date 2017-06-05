@@ -105,5 +105,5 @@ def run(token: str):
     updater.start_polling()
 
 
-if __name__ == "__main__":
+def start():
     run(get_token())
