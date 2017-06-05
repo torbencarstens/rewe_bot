@@ -3,8 +3,6 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 
-from .user import User
-
 
 class S3:
     bucket_name = "rewe-bot"
@@ -12,16 +10,16 @@ class S3:
     base_path = "./resources"
     filename = None
 
-    def __init__(self, user: User):
+    def __init__(self, p_user):
         """
         
-        :param user: rewe.User User the file will be saved with
+        :param p_user: rewe.User User the file will be saved with
         """
         self.session = boto3.Session(profile_name=self.profile_name)
         self.s3 = self.session.resource("s3")
         self.bucket: self.s3.Bucket = self.s3.Bucket(self.bucket_name)
 
-        self.user = user
+        self.user = p_user
 
     def get_local_filepath(self, directory: str = None, filename: str = None):
         if not directory:

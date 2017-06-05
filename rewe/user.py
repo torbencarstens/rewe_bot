@@ -2,8 +2,7 @@ import json
 import os
 from typing import List, Dict
 
-from . import wanted
-from .s3 import S3
+from . import s3, wanted
 from .wanted import WantedProduct, WantedProducts
 
 
@@ -17,7 +16,7 @@ class User:
         """
         self.id = id
         self.products = self.get_wanted_products()
-        self.s3 = S3(self)
+        self.s3 = s3.S3(self)
         self.filename = self.s3.get_local_filepath(directory=self.base)
         self.market_id = self.get_market_id()
 
