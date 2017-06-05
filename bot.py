@@ -1,8 +1,10 @@
 import json
+
 from telegram.bot import Bot
 from telegram.ext import CommandHandler, Updater
-from .rewe_offers import get
-from .wanted import WantedProducts
+
+from rewe_offers import get
+from wanted import WantedProducts
 
 
 def get_token(filename: str = "secrets.json"):

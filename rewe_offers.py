@@ -1,6 +1,7 @@
-from .offers import OffersWebsite
-from .wanted import WantedProducts
 from typing import Dict
+
+from offers import OffersWebsite
+from wanted import WantedProducts
 
 
 def get_acceptable_offers(*, market_id: str, wanted_filename: str) -> Dict[str, float]:
