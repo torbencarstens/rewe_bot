@@ -4,7 +4,7 @@ setup(
     name='rewe_bot',
     version='0.0.1',
     packages=[''],
-    url='github.com/Chabare/rewe_bot',
+    url='https://github.com/Chabare/rewe_bot',
     license='MIT',
     author='chabare',
     author_email='chabare95@gmail.com',
