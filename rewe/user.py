@@ -3,6 +3,7 @@ import os
 from typing import List, Dict
 
 from . import wanted
+from .s3 import S3
 from .wanted import WantedProduct, WantedProducts
 
 
@@ -14,8 +15,9 @@ class User:
         :param id: int
         """
         self.id = id
-        self.filename = ".".join([os.pathsep.join([self.base, id]), "json"])
         self.products = self.get_wanted_products()
+        self.s3 = S3(self)
+        self.filename = self.s3.get_local_filepath(directory=self.base)
 
     def get_wanted_products(self) -> List[WantedProduct]:
         if os.path.exists(self.filename):
@@ -31,6 +33,15 @@ class User:
         with open(self.filename, "w") as resource:
             json.dump(wanted.to_json(self.products), resource)
 
+    def _upload(self, *, base_directory: str = None):
+        self.s3.upload(directory=base_directory)
+
+    def _download(self, *, base_directory: str = None):
+        self.s3.download(directory=base_directory)
+
     def _read(self) -> Dict:
+        if not os.path.exists(self.filename):
+            self.s3.exists()
+
         with open(self.filename, "r") as resource:
             return json.load(resource)
