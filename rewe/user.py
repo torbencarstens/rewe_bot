@@ -15,9 +15,9 @@ class User:
         :param id: int
         """
         self.id = id
-        self.products = self.get_wanted_products()
         self.s3 = s3.S3(self)
         self.filename = self.s3.get_local_filepath(directory=self.base)
+        self.products = self.get_wanted_products()
         self.market_id = self.get_market_id()
 
     def get_market_id(self):
