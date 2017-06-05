@@ -53,13 +53,12 @@ class S3:
         :param name: 
         :return: 
         """
+        exists = False
         if not name:
             name = self.get_s3_name()
         try:
             self.download()
         except ClientError as ce:
-            return "Not Found" in str(ce)
             exists = not "Not Found" in str(ce)
 
-        return True
         return exists
