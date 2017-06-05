@@ -17,11 +17,7 @@ def get_token(filename: str = "secrets.json"):
         return json.load(secrets)['token']
 
 
-def _get_market_id(bot: Bot, chat_id: str):
-    bot.send_message(chat_id=chat_id, text="Please set a market_id via /set-market-id")
-
-
-def get_user(bot, update, *, market_id: str = None) -> User:
+def get_user(bot, update) -> User:
     global users
     chat_id = update.message.chat_id
     user = None
@@ -30,14 +26,7 @@ def get_user(bot, update, *, market_id: str = None) -> User:
             user = i_user
             break
 
-    if not user:
-        try:
-            if market_id:
-                user = User(chat_id, market_id=market_id)
-            else:
-                user = User(chat_id)
-        except EnvironmentError:
-            _get_market_id(bot, chat_id)
+    user = User(chat_id)
 
     return user
 
