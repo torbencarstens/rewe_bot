@@ -102,7 +102,7 @@ def set_market_id(bot: Bot, update):
 
 
 def status(bot: Bot, update):
-    bot.send_message(chat_id=update.message.chat_id, text="Functional")
+    bot.send_message(chat_id=update.message.chat_id, text="[{}] Functional".format(update.message.chat_id))
 
 
 def run(token: str):
