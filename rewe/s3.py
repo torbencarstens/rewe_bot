@@ -21,6 +21,8 @@ class S3:
 
         self.user = p_user
 
+        os.makedirs(self.base_path, exist_ok=True)
+
     def get_local_filepath(self, directory: str = None, filename: str = None):
         if not directory:
             directory = self.base_path
@@ -57,5 +59,7 @@ class S3:
             self.download()
         except ClientError as ce:
             return "Not Found" in str(ce)
+            exists = not "Not Found" in str(ce)
 
         return True
+        return exists
