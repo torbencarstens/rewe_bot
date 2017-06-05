@@ -17,7 +17,11 @@ def get_token(filename: str = "secrets.json"):
         return json.load(secrets)['token']
 
 
-def get_user(update) -> User:
+def _get_market_id(bot: Bot, chat_id: str):
+    bot.send_message(chat_id=chat_id, text="Please set a market_id via /set-market-id")
+
+
+def get_user(bot, update, *, market_id: str = None) -> User:
     global users
     chat_id = update.message.chat_id
     user = None
@@ -27,7 +31,13 @@ def get_user(update) -> User:
             break
 
     if not user:
-        user = User(chat_id)
+        try:
+            if market_id:
+                user = User(chat_id, market_id=market_id)
+            else:
+                user = User(chat_id)
+        except EnvironmentError:
+            _get_market_id(bot, chat_id)
 
     return user
 
@@ -39,7 +49,7 @@ def _get_product_printable(name: str, price: float):
 
 
 def offers(bot: Bot, update):
-    user = get_user(update)
+    user = get_user(bot, update)
     products = []
 
     wanted_filename = user.filename
@@ -51,7 +61,7 @@ def offers(bot: Bot, update):
 
 
 def list_all(bot: Bot, update):
-    user = get_user(update)
+    user = get_user(bot, update)
     products = []
 
     market_id = user.market_id
@@ -64,11 +74,12 @@ def list_all(bot: Bot, update):
 
 
 def is_offer(bot: Bot, update):
-    user = get_user(update)
+    user = get_user(bot, update)
     wanted_product = " ".join(update.message.text.split()[1:])
     if not wanted_product:
         bot.send_message(chat_id=update.message.chat_id, text="How about specifying a product?",
                          parse_mode=telegram.ParseMode.MARKDOWN)
+        return
     market_id = user.market_id
 
     found = False
@@ -86,12 +97,19 @@ def is_offer(bot: Bot, update):
 
 
 def list_wanted(bot: Bot, update):
-    user: User = get_user(update)
+    user: User = get_user(bot, update)
     wanted_filename = user.filename
     wanted_products = WantedProducts(wanted_filename).get_products()
     bot.send_message(chat_id=update.message.chat_id,
                      text="\n".join([product.get_name() for product in wanted_products]),
                      parse_mode=telegram.ParseMode.MARKDOWN)
+
+
+def set_market_id(bot: Bot, update):
+    market_id = " ".join(update.message.text.split()[1:])
+    user = get_user(bot, update)
+    if user:
+        user.add_market_id(market_id)
 
 
 def run(token: str):
@@ -101,6 +119,7 @@ def run(token: str):
     dispatcher.add_handler(CommandHandler("list_all", list_all))
     dispatcher.add_handler(CommandHandler("list_wanted", list_wanted))
     dispatcher.add_handler(CommandHandler("is_offer", is_offer))
+    dispatcher.add_handler(CommandHandler("set_market_id", set_market_id))
 
     updater.start_polling()
 
