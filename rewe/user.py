@@ -19,8 +19,6 @@ class User:
         self.filename = self.s3.get_local_filepath(directory=self.base)
         self._read()
         self.products = self.get_wanted_products()
-        if not os.path.exists(self.filename):
-            self._create_empty()
         self.market_id = self.get_market_id()
 
         if not self.s3.exists():
@@ -79,5 +77,8 @@ class User:
         if not os.path.exists(self.filename):
             self.s3.exists()
 
-        with open(self.filename, "r") as resource:
-            return json.load(resource)
+        try:
+            with open(self.filename, "r") as resource:
+                return json.load(resource)
+        except OSError:
+            self._create_empty()
