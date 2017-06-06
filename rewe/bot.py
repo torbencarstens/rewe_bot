@@ -81,7 +81,8 @@ def list_all(bot: Bot, update):
     offers = OffersWebsite(market_id).get_offers()
     log.debug("Found %d offers", len(offers))
     for offer in offers:
-        name, price = offer.get().values()
+        name = offer.get_name()
+        price = offer.get_price()
         products.append(_get_product_printable(name, price))
 
     log.debug("Send: %s", user.id)
@@ -104,6 +105,8 @@ def is_offer(bot: Bot, update):
     offers = OffersWebsite(market_id).get_offers()
     log.debug("Found %d offers", len(offers))
     for offer in offers:
+        name = offer.get_name()
+        price = offer.get_price()
         if wanted_product in name.lower():
             found = True
             bot.send_message(chat_id=update.message.chat_id, text=_get_product_printable(name, price),
