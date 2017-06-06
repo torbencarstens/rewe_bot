@@ -77,11 +77,14 @@ class User:
         with open(self.filename, "w") as resource:
             json.dump(complete, resource)
 
-    def _upload(self, *, base_directory: str = None):
+    def _upload(self, *, base_directory: str = None) -> bool:
         if self.market_id or self.products:
             self.log.debug("Upload")
             self.s3.upload(directory=base_directory)
             self.log.debug("Uploaded")
+            return True
+
+        return False
 
     def _download(self, *, base_directory: str = None):
         self.s3.download(directory=base_directory)
