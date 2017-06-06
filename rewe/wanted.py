@@ -1,12 +1,16 @@
 import codecs
 import json
+import logging
+import re
 from typing import Dict, List, Union
 
+from .logger import Logger
 from .product import Product
 
 
 class WantedProduct(Product):
-    def __init__(self, item: Dict):
+    def __init__(self, item: Dict, *, log_level: str = "INFO"):
+        self.log = Logger("WantedProduct", level=log_level)
         self.id = item['id']
         name = item['name']
         self.mappings = item['mappings']
@@ -31,12 +35,15 @@ class WantedProduct(Product):
 
 
 class WantedProducts:
-    def __init__(self, filename: str):
+    products = None
+
+    def __init__(self, filename: str, *, log_level: str = "INFO"):
+        self.log = Logger("WantedProducts", level=log_level)
         with codecs.open(filename, "r+", "utf-8") as wanted:
             self.wanted = json.load(wanted)['products']
 
     def get_products(self) -> List[WantedProduct]:
-        products = [WantedProduct(item) for item in self.wanted]
+        products = [WantedProduct(item, log_level=self.log.getEffectiveLevel()) for item in self.wanted]
         return products
 
     def get_all_mappings(self) -> List[str]:
