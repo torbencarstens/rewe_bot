@@ -29,13 +29,13 @@ class TelegramProduct(Product):
         return result
 
     def _price(self, markdown: bool = True):
-        printable = "[{}{}{}]"
+        printable = "{}[{}{}{}]"
         substitution = ["", "", self.price, ""]
 
         if markdown:
             substitution[0] = "\\"
             substitution[1] = "*"
-            substitution[2] = "*"
+            substitution[3] = "*"
 
         return printable.format(*substitution)
 
