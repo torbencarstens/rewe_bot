@@ -29,14 +29,11 @@ class User:
         self.market_id = self.get_market_id()
         self.log.debug("MarketID %s for user: %s", self.market_id, id)
 
-        if not self.s3.exists():
-            self.log.debug("File %s does not exists in remote for user: %s", self.filename, id)
-            self._upload()
-            self.log.debug("Uploaded %s for user: %s", self.filename, id)
         self.log.debug("Created user: %s", id)
 
     def add_market_id(self, market_id):
         self.market_id = market_id
+        self._write()
 
     def get_market_id(self):
         """
@@ -69,13 +66,13 @@ class User:
 
     def _write(self) -> None:
         products = wanted.to_json(self.products)
-        market_id = self.market_id
+        market_id = {"market_id": self.market_id}
         complete = {}
         complete.update(products)
         complete.update(market_id)
 
         with open(self.filename, "w") as resource:
-            json.dump(complete, resource)
+            json.dump(complete, resource, indent=2)
 
     def _upload(self, *, base_directory: str = None) -> bool:
         if self.market_id or self.products:

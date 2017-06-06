@@ -31,7 +31,26 @@ class WantedProduct(Product):
         return {"name": self.get_name(), "mappings": self.get_mappings()}
 
     def to_json(self) -> Dict[str, Union[str, List[str]]]:
-        return self.get()
+        js = self.get()
+        js['id'] = self.id
+
+        return js
+
+    @classmethod
+    def parse_new(cls, *, id: int, input: str):
+        regex = r"(.*?)\s*-\s*\[(.*?)\]"
+        result = {}
+
+        matches = re.findall(regex, input)
+        if matches:
+            name, mappings_raw = matches[0]
+            mappings = re.split(",\s*", mappings_raw)
+            mappings = [mapping for mapping in mappings if mapping]
+
+            result = {"id": id, "name": name, "mappings": mappings}
+
+        logging.getLogger("WantedProduct").debug("Create new offer from: %s", result)
+        return cls(result)
 
 
 class WantedProducts:
@@ -50,6 +69,12 @@ class WantedProducts:
         complete_list = [product.get_mappings() for product in self.get_products()]
 
         return [element for sublist in complete_list for element in sublist]
+
+    def last_id(self) -> int:
+        try:
+            return max(self.wanted, key=lambda wanted: wanted["id"])["id"]
+        except (KeyError, ValueError):
+            return -1
 
 
 def to_json(products: List[WantedProduct]) -> Dict[str, Union[str, List[str]]]:
