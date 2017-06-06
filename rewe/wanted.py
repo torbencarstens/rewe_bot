@@ -51,6 +51,9 @@ class WantedProducts:
 
         return [element for sublist in complete_list for element in sublist]
 
+    def last_id(self) -> int:
+        return max(self.wanted, key=lambda wanted: wanted["id"])["id"]
+
 
 def to_json(products: List[WantedProduct]) -> Dict[str, Union[str, List[str]]]:
     json_products = {'products': []}
