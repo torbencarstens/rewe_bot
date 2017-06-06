@@ -43,9 +43,6 @@ class TelegramProduct(Product):
         printable = "{}"
 
         if picture_link and self.picture_link:
-            printable = "[{}]()".format(self.picture_link, "{}")
+            printable = "[{}]({})".format("{}", self.picture_link)
 
         return printable.format(self.name)
-
-    def picture_link(self):
-        pass
