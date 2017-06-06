@@ -2,6 +2,7 @@ import json
 import os
 from typing import List, Dict
 
+from .logger import Logger
 from . import s3, wanted
 from .wanted import WantedProduct, WantedProducts
 
@@ -10,19 +11,29 @@ class User:
     base = "resources"
     market_id = None
 
-    def __init__(self, id: int, market_id: str = None):
+    def __init__(self, id: int, log_level: str = "INFO"):
         """
         :param id: int
         """
+        self.log = Logger("User", level=log_level)
+        self.log.debug("Create user: %s", id)
+
         self.id = id
-        self.s3 = s3.S3(self)
+        self.s3 = s3.S3(self, log_level=log_level)
         self.filename = self.s3.get_local_filepath(directory=self.base)
+        self.log.debug("Filename(%s) for user: %s", self.filename, id)
         self._read()
+        self.log.debug("Successfully read from %s for user: %s", self.filename, id)
         self.products = self.get_wanted_products()
+        self.log.debug("Number of relevant products %d for user: %s", len(self.products), id)
         self.market_id = self.get_market_id()
+        self.log.debug("MarketID %s for user: %s", self.market_id, id)
 
         if not self.s3.exists():
+            self.log.debug("File %s does not exists in remote for user: %s", self.filename, id)
             self._upload()
+            self.log.debug("Uploaded %s for user: %s", self.filename, id)
+        self.log.debug("Created user: %s", id)
 
     def add_market_id(self, market_id):
         self.market_id = market_id
@@ -30,7 +41,7 @@ class User:
     def get_market_id(self):
         """
         Returns empty market_id if file has no `market_id`/is non existent
-        :return: 
+        :return:
         """
         if self.market_id:
             return self.market_id
@@ -68,7 +79,9 @@ class User:
 
     def _upload(self, *, base_directory: str = None):
         if self.market_id or self.products:
+            self.log.debug("Upload")
             self.s3.upload(directory=base_directory)
+            self.log.debug("Uploaded")
 
     def _download(self, *, base_directory: str = None):
         self.s3.download(directory=base_directory)

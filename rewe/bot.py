@@ -20,7 +20,7 @@ def get_token(filename: str = "secrets.json"):
     with open(filename, "r+") as secrets:
         token = json.load(secrets)['token']
 
-    log.debug("Token length: {}".format(len(token)))
+    log.debug("Token length: %d", len(token))
     return token
 
 
@@ -37,10 +37,10 @@ def get_user(bot, update) -> User:
             break
 
     if not user:
-        log.debug("Creating new user: {}".format(chat_id))
-        user = User(chat_id)
+        log.debug("Creating new user: %s", chat_id)
+        user = User(chat_id, log_level="DEBUG")
+        log.debug("Created user: %s", chat_id)
         users.append(user)
-        log.debug("Created user: {}".format(chat_id))
 
     return user
 
@@ -54,32 +54,37 @@ def _get_product_printable(name: str, price: float):
 def offers(bot: Bot, update):
     global log
     log.debug("list")
-    user = get_user(bot, update)
+    user = get_user(update)
     products = []
 
     wanted_filename = user.filename
     market_id = user.market_id
-    for name, price in get(market_id=market_id, wanted_filename=wanted_filename).items():
+    log.debug("Filename: %s | MarketID: %s", wanted_filename, market_id)
+    items = get(market_id=market_id, wanted_filename=wanted_filename).items()
+    log.debug("Found %d items", len(items))
+    for name, price in items:
         products.append(_get_product_printable(name, price))
 
-    log.debug("Send: {}".format(user.id))
-    bot.send_message(chat_id=update.message.chat_id, text="\n".join(products), parse_mode=telegram.ParseMode.MARKDOWN)
+    log.debug("Send: %s", user.id)
+    text = "\n".join(products)
+    bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 def list_all(bot: Bot, update):
     global log
     log.debug("list_all")
-    print("list_all")
     user = get_user(bot, update)
     products = []
 
     market_id = user.market_id
+    log.debug("MarketID: %s", market_id)
     offers = OffersWebsite(market_id).get_offers()
+    log.debug("Found %d offers", len(offers))
     for offer in offers:
         name, price = offer.get().values()
         products.append(_get_product_printable(name, price))
 
-    log.debug("Send: {}".format(user.id))
+    log.debug("Send: %s", user.id)
     bot.send_message(chat_id=update.message.chat_id, text="\n".join(products), parse_mode=telegram.ParseMode.MARKDOWN)
 
 
@@ -88,15 +93,17 @@ def is_offer(bot: Bot, update):
     log.debug("is_offer")
     user = get_user(bot, update)
     wanted_product = " ".join(update.message.text.split()[1:])
+    log.debug("Wanted product: %s", wanted_product)
     if not wanted_product:
         bot.send_message(chat_id=update.message.chat_id, text="How about specifying a product?",
                          parse_mode=telegram.ParseMode.MARKDOWN)
         return
     market_id = user.market_id
-
+    log.debug("MarketID: %s", market_id)
     found = False
-    for offer in OffersWebsite(market_id).get_offers():
-        name, price = offer.get().values()
+    offers = OffersWebsite(market_id).get_offers()
+    log.debug("Found %d offers", len(offers))
+    for offer in offers:
         if wanted_product in name.lower():
             found = True
             bot.send_message(chat_id=update.message.chat_id, text=_get_product_printable(name, price),
@@ -104,17 +111,14 @@ def is_offer(bot: Bot, update):
             break
 
     if not found:
-        log.debug("Send: {}".format(user.id))
-        bot.send_message(chat_id=update.message.chat_id, text="No",
-                         parse_mode=telegram.ParseMode.MARKDOWN)
-    else:
-        log.debug("Not found offer({}): {}".format(wanted_product, user.id))
+        log.debug("Not found | Send: %s", user.id)
+        bot.send_message(chat_id=update.message.chat_id, text="No", parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 def list_wanted(bot: Bot, update):
     global log
     log.debug("list_wanted")
-    user: User = get_user(bot, update)
+    user: User = get_user(update)
     wanted_filename = user.filename
     wanted_products = WantedProducts(wanted_filename).get_products()
 
@@ -130,9 +134,9 @@ def set_market_id(bot: Bot, update):
     market_id = " ".join(update.message.text.split()[1:])
     user = get_user(bot, update)
     if user:
-        log.debug("Assign market_id: {}".format(user.id))
+        log.debug("Assign market_id: %s", user.id)
         user.add_market_id(market_id)
-        log.debug("Assigned market_id: {}".format(user.id))
+        log.debug("Assigned market_id: %s", user.id)
 
 
 def status(bot: Bot, update):
