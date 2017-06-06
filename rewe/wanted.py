@@ -37,7 +37,7 @@ class WantedProduct(Product):
         return js
 
     @classmethod
-    def parse_new(cls, id: int, input: str):
+    def parse_new(cls, *, id: int, input: str):
         regex = r"(.*?)\s*-\s*\[(.*?)\]"
         result = {}
 
