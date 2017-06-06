@@ -31,7 +31,10 @@ class WantedProduct(Product):
         return {"name": self.get_name(), "mappings": self.get_mappings()}
 
     def to_json(self) -> Dict[str, Union[str, List[str]]]:
-        return self.get()
+        js = self.get()
+        js['id'] = self.id
+
+        return js
 
     @classmethod
     def parse_new(cls, id: int, input: str):
