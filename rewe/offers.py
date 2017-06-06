@@ -5,13 +5,18 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from .product import Product
 
-class Offer:
+
+class Offer(Product):
     def __init__(self, outer_soup: Tag):
         self.outer_soup = outer_soup
         self.soup: Tag = outer_soup.find(class_="dotdot").find("div")
-        self.name: str = self.get_name()
-        self.price: float = self.get_price()
+        name: str = self.get_name()
+        price: float = self.get_price()
+        picture_link: str = self.get_picture_link()
+
+        super().__init__(name=name, price=price, picture_link=picture_link)
 
     def get_price(self) -> float:
         if self.price:

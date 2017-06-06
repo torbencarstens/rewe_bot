@@ -2,12 +2,16 @@ import codecs
 import json
 from typing import Dict, List, Union
 
+from .product import Product
 
-class WantedProduct:
+
+class WantedProduct(Product):
     def __init__(self, item: Dict):
         self.id = item['id']
-        self.name = item['name']
+        name = item['name']
         self.mappings = item['mappings']
+
+        super().__init__(name=name)
 
     def get_mappings(self) -> List[str]:
         return self.mappings
