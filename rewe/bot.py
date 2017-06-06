@@ -45,7 +45,6 @@ def get_user(update) -> User:
     return user
 
 
-# TODO: Add markdown
 def _get_product_printable(name: str, price: float):
     bold_price = "*{}*".format(price)
     return "\[{}] {}".format(bold_price, name)
