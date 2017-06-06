@@ -62,7 +62,7 @@ class OffersWebsite:
         if not base_url:
             base_url = "https://www.rewe.de/angebote/?marketChosen="
 
-        self.url = "/".join([base_url, market_id])
+        self.url = "".join([base_url, market_id])
 
     def get_content(self) -> Union[bytes, str]:
         req = requests.get(self.url)
