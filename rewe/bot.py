@@ -6,6 +6,7 @@ from telegram.ext import CommandHandler, Updater
 
 from .logger import Logger
 from .offers import OffersWebsite
+from .product import TelegramProduct
 from .rewe_offers import get
 from .user import User
 from .wanted import WantedProducts
@@ -38,16 +39,22 @@ def get_user(update) -> User:
 
     if not user:
         log.debug("Creating new user: %s", chat_id)
-        user = User(chat_id, log_level="DEBUG")
+        user = User(chat_id, log_level=log.getEffectiveLevel())
         log.debug("Created user: %s", chat_id)
         users.append(user)
 
     return user
 
 
+"""
 def _get_product_printable(name: str, price: float):
     bold_price = "*{}*".format(price)
     return "\[{}] {}".format(bold_price, name)
+"""
+
+
+def _get_product_printable(offer):
+    return TelegramProduct.from_offer(offer).get()
 
 
 def offers(bot: Bot, update):
@@ -77,15 +84,35 @@ def list_all(bot: Bot, update):
 
     market_id = user.market_id
     log.debug("MarketID: %s", market_id)
-    offers = OffersWebsite(market_id).get_offers()
+    offers = OffersWebsite(market_id, log_level=log.getEffectiveLevel()).get_offers()
     log.debug("Found %d offers", len(offers))
     for offer in offers:
         name = offer.get_name()
         price = offer.get_price()
-        products.append(_get_product_printable(name, price))
+        # products.append(_get_product_printable(name, price))
+        products.append(_get_product_printable(offer))
 
-    log.debug("Send: %s", user.id)
-    bot.send_message(chat_id=update.message.chat_id, text="\n".join(products), parse_mode=telegram.ParseMode.MARKDOWN)
+    message_length = 4096
+    messages = []
+    current_length = 0
+    current_message = 0
+    for product in products:
+        if len(messages) <= current_message:
+            messages.append([])
+
+        product_length = len(product)
+        if current_length + product_length < message_length:
+            current_length += product_length
+            messages[current_message].append(product)
+        else:
+            current_length = 0
+            current_message += 1
+
+    log.debug("Send %d messages: %s", len(messages), user.id)
+    for message in messages:
+        sendable = "\n".join(message)
+        bot.send_message(chat_id=update.message.chat_id, text=sendable, parse_mode=telegram.ParseMode.MARKDOWN,
+                         disable_web_page_preview=True)
 
 
 def is_offer(bot: Bot, update):
@@ -101,7 +128,7 @@ def is_offer(bot: Bot, update):
     market_id = user.market_id
     log.debug("MarketID: %s", market_id)
     found = False
-    offers = OffersWebsite(market_id).get_offers()
+    offers = OffersWebsite(market_id, log_level=log.getEffectiveLevel()).get_offers()
     log.debug("Found %d offers", len(offers))
     for offer in offers:
         name = offer.get_name()
