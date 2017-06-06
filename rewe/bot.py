@@ -9,7 +9,7 @@ from .offers import OffersWebsite
 from .product import TelegramProduct
 from .rewe_offers import get
 from .user import User
-from .wanted import WantedProducts
+from .wanted import WantedProduct, WantedProducts
 
 users = []
 log = Logger("bot", level="DEBUG")
@@ -170,6 +170,15 @@ def add_offer(bot: Bot, update):
     global log
     user = get_user(update)
     log.debug("%s", user.id)
+    new_offer = " ".join(update.message.text.split()[1:])
+    log.debug("New offer: %s", new_offer)
+
+    id = WantedProducts(user.filename).last_id() + 1
+    log.debug("Last id: %d", id)
+    wp = WantedProduct.parse_new(id=id, input=new_offer)
+    log.debug("Created new product(%d): %s", wp.id, wp.to_json())
+    user.add_offer(wp)
+    log.debug("Added product %s to user %s", wp.to_json(), user.id)
 
 
 def set_market_id(bot: Bot, update):
