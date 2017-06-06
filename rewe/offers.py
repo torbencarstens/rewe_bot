@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from .logger import Logger
 from .product import Product
 
 
@@ -58,11 +59,13 @@ class Offer(Product):
 
 
 class OffersWebsite:
-    def __init__(self, market_id: str, *, base_url=None):
+    def __init__(self, market_id: str, *, base_url=None, log_level: str = "INFO"):
+        self.log = Logger("OffersWebsite", level=log_level)
         if not base_url:
             base_url = "https://www.rewe.de/angebote/?marketChosen="
 
         self.url = "".join([base_url, market_id])
+        self.log.debug("URL for offers website: %s", self.url)
 
     def get_content(self) -> Union[bytes, str]:
         req = requests.get(self.url)
