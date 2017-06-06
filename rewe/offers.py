@@ -5,16 +5,19 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from .logger import Logger
+from .product import Product
 
-class Offer:
-    name = None
-    price = None
 
+class Offer(Product):
     def __init__(self, outer_soup: Tag):
         self.outer_soup = outer_soup
         self.soup: Tag = outer_soup.find(class_="dotdot").find("div")
-        self.name: str = self.get_name()
-        self.price: float = self.get_price()
+        name: str = self.get_name()
+        price: float = self.get_price()
+        picture_link: str = self.get_picture_link()
+
+        super().__init__(name=name, price=price, picture_link=picture_link)
 
     def get_price(self) -> float:
         if self.price:
@@ -34,7 +37,13 @@ class Offer:
         return single_whitespace_name
 
     def get_picture_link(self) -> str:
-        return self.outer_soup.find('img')['href']
+        link_w_query = self.outer_soup.find('img').get('data-src')
+        link = link_w_query
+
+        if link_w_query.rfind("?") != -1:
+            link = link_w_query.rsplit("?")[0]
+
+        return link
 
     def get_picture(self) -> Union[bytes, str]:
         link = self.get_picture_link()
@@ -50,11 +59,13 @@ class Offer:
 
 
 class OffersWebsite:
-    def __init__(self, market_id: str, *, base_url=None):
+    def __init__(self, market_id: str, *, base_url=None, log_level: str = "INFO"):
+        self.log = Logger("OffersWebsite", level=log_level)
         if not base_url:
             base_url = "https://www.rewe.de/angebote/?marketChosen="
 
-        self.url = "/".join([base_url, market_id])
+        self.url = "".join([base_url, market_id])
+        self.log.debug("URL for offers website: %s", self.url)
 
     def get_content(self) -> Union[bytes, str]:
         req = requests.get(self.url)
