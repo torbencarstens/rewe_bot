@@ -24,7 +24,7 @@ def get_token(filename: str = "secrets.json"):
     return token
 
 
-def get_user(bot, update) -> User:
+def get_user(update) -> User:
     global log
     log.debug("get_user")
     global users
@@ -73,7 +73,7 @@ def offers(bot: Bot, update):
 def list_all(bot: Bot, update):
     global log
     log.debug("list_all")
-    user = get_user(bot, update)
+    user = get_user(update)
     products = []
 
     market_id = user.market_id
@@ -92,7 +92,7 @@ def list_all(bot: Bot, update):
 def is_offer(bot: Bot, update):
     global log
     log.debug("is_offer")
-    user = get_user(bot, update)
+    user = get_user(update)
     wanted_product = " ".join(update.message.text.split()[1:])
     log.debug("Wanted product: %s", wanted_product)
     if not wanted_product:
@@ -135,7 +135,7 @@ def set_market_id(bot: Bot, update):
     global log
     log.debug("set_market_id")
     market_id = " ".join(update.message.text.split()[1:])
-    user = get_user(bot, update)
+    user = get_user(update)
     if user:
         log.debug("Assign market_id: %s", user.id)
         user.add_market_id(market_id)
