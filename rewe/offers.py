@@ -36,7 +36,13 @@ class Offer(Product):
         return single_whitespace_name
 
     def get_picture_link(self) -> str:
-        return self.outer_soup.find('img')['href']
+        link_w_query = self.outer_soup.find('img').get('data-src')
+        link = link_w_query
+
+        if link_w_query.rfind("?") != -1:
+            link = link_w_query.rsplit("?")[0]
+
+        return link
 
     def get_picture(self) -> Union[bytes, str]:
         link = self.get_picture_link()
