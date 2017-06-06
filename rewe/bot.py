@@ -166,6 +166,12 @@ def list_wanted(bot: Bot, update):
                      parse_mode=telegram.ParseMode.MARKDOWN)
 
 
+def add_offer(bot: Bot, update):
+    global log
+    user = get_user(update)
+    log.debug("%s", user.id)
+
+
 def set_market_id(bot: Bot, update):
     global log
     log.debug("set_market_id")
@@ -193,6 +199,7 @@ def run(token: str):
     dispatcher.add_handler(CommandHandler("is_offer", is_offer))
     dispatcher.add_handler(CommandHandler("set_market_id", set_market_id))
     dispatcher.add_handler(CommandHandler("status", status))
+    dispatcher.add_handler(CommandHandler("add_offer", add_offer))
 
     log.debug("Start polling")
     updater.start_polling()
