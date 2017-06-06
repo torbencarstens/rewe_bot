@@ -29,14 +29,11 @@ class User:
         self.market_id = self.get_market_id()
         self.log.debug("MarketID %s for user: %s", self.market_id, id)
 
-        if not self.s3.exists():
-            self.log.debug("File %s does not exists in remote for user: %s", self.filename, id)
-            self._upload()
-            self.log.debug("Uploaded %s for user: %s", self.filename, id)
         self.log.debug("Created user: %s", id)
 
     def add_market_id(self, market_id):
         self.market_id = market_id
+        self._write()
 
     def get_market_id(self):
         """
