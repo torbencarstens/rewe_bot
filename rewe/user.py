@@ -66,13 +66,13 @@ class User:
 
     def _write(self) -> None:
         products = wanted.to_json(self.products)
-        market_id = self.market_id
+        market_id = {"market_id": self.market_id}
         complete = {}
         complete.update(products)
         complete.update(market_id)
 
         with open(self.filename, "w") as resource:
-            json.dump(complete, resource)
+            json.dump(complete, resource, indent=2)
 
     def _upload(self, *, base_directory: str = None) -> bool:
         if self.market_id or self.products:
