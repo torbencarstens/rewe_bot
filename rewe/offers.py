@@ -7,9 +7,6 @@ from bs4.element import Tag
 
 
 class Offer:
-    name = None
-    price = None
-
     def __init__(self, outer_soup: Tag):
         self.outer_soup = outer_soup
         self.soup: Tag = outer_soup.find(class_="dotdot").find("div")

@@ -2,7 +2,9 @@ import os
 
 import boto3
 from botocore.exceptions import ClientError
+
 from .logger import Logger
+
 
 class S3:
     bucket_name = "rewe-bot"

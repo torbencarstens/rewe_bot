@@ -2,8 +2,8 @@ import json
 import os
 from typing import List, Dict
 
-from .logger import Logger
 from . import s3, wanted
+from .logger import Logger
 from .wanted import WantedProduct, WantedProducts
 
 
