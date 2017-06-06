@@ -46,52 +46,7 @@ def get_user(update) -> User:
     return user
 
 
-"""
-def _get_product_printable(name: str, price: float):
-    bold_price = "*{}*".format(price)
-    return "\[{}] {}".format(bold_price, name)
-"""
-
-
-def _get_product_printable(offer):
-    return TelegramProduct.from_offer(offer).get()
-
-
-def offers(bot: Bot, update):
-    global log
-    log.debug("list")
-    user = get_user(update)
-    products = []
-
-    wanted_filename = user.filename
-    market_id = user.market_id
-    log.debug("Filename: %s | MarketID: %s", wanted_filename, market_id)
-    items = get(market_id=market_id, wanted_filename=wanted_filename).items()
-    log.debug("Found %d items", len(items))
-    for name, price in items:
-        products.append(_get_product_printable(name, price))
-
-    log.debug("Send: %s", user.id)
-    text = "\n".join(products)
-    bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=telegram.ParseMode.MARKDOWN)
-
-
-def list_all(bot: Bot, update):
-    global log
-    log.debug("list_all")
-    user = get_user(update)
-    products = []
-
-    market_id = user.market_id
-    log.debug("MarketID: %s", market_id)
-    offers = OffersWebsite(market_id, log_level=log.getEffectiveLevel()).get_offers()
-    log.debug("Found %d offers", len(offers))
-    for offer in offers:
-        name = offer.get_name()
-        price = offer.get_price()
-        # products.append(_get_product_printable(name, price))
-        products.append(_get_product_printable(offer))
-
+def _split_messages(products):
     message_length = 4096
     messages = []
     current_length = 0
@@ -108,11 +63,65 @@ def list_all(bot: Bot, update):
             current_length = 0
             current_message += 1
 
+    return messages
+
+
+def _get_product_printable_np(name: str, price: float):
+    bold_price = "*{}*".format(price)
+    return "\[{}] {}".format(bold_price, name)
+
+
+def _get_product_printable(offer):
+    return TelegramProduct.from_offer(offer).get()
+
+
+def offers(bot: Bot, update):
+    global log
+    log.debug("list")
+    user = get_user(update)
+    products = []
+
+    wanted_filename = user.filename
+    market_id = user.market_id
+    log.debug("Filename: %s | MarketID: %s", wanted_filename, market_id)
+    offers = get(market_id=market_id, wanted_filename=wanted_filename)
+    log.debug("Found %d offers", len(offers))
+    for offer in offers:
+        products.append(_get_product_printable(offer))
+
+    messages = _split_messages(products)
+
     log.debug("Send %d messages: %s", len(messages), user.id)
+    first = True
     for message in messages:
         sendable = "\n".join(message)
         bot.send_message(chat_id=update.message.chat_id, text=sendable, parse_mode=telegram.ParseMode.MARKDOWN,
-                         disable_web_page_preview=True)
+                         disable_web_page_preview=True, disable_notification=not first)
+        first = False
+
+
+def list_all(bot: Bot, update):
+    global log
+    log.debug("list_all")
+    user = get_user(update)
+    products = []
+
+    market_id = user.market_id
+    log.debug("MarketID: %s", market_id)
+    offers = OffersWebsite(market_id, log_level=log.getEffectiveLevel()).get_offers()
+    log.debug("Found %d offers", len(offers))
+    for offer in offers:
+        products.append(_get_product_printable(offer))
+
+    messages = _split_messages(products)
+
+    log.debug("Send %d messages: %s", len(messages), user.id)
+    first = True
+    for message in messages:
+        sendable = "\n".join(message)
+        bot.send_message(chat_id=update.message.chat_id, text=sendable, parse_mode=telegram.ParseMode.MARKDOWN,
+                         disable_web_page_preview=True, disable_notification=not first)
+        first = False
 
 
 def is_offer(bot: Bot, update):
@@ -135,7 +144,7 @@ def is_offer(bot: Bot, update):
         price = offer.get_price()
         if wanted_product in name.lower():
             found = True
-            bot.send_message(chat_id=update.message.chat_id, text=_get_product_printable(name, price),
+            bot.send_message(chat_id=update.message.chat_id, text=_get_product_printable_np(name, price),
                              parse_mode=telegram.ParseMode.MARKDOWN)
             break
 
