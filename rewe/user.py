@@ -78,6 +78,8 @@ class User:
         except ValueError:
             return False
 
+        self._write()
+        self._upload()
         return True
 
     def _write(self) -> None:
