@@ -65,12 +65,20 @@ class User:
         self._upload()
 
     def remove_offer_key(self, product_key: str) -> bool:
+        to_remove = None
         for product in self.products:
             if product_key == product.get_name():
-                self.products.remove(product)
-                return True
+                to_remove = product
 
-        return False
+        return self.remove_offer(to_remove)
+
+    def remove_offer(self, product: WantedProduct):
+        try:
+            self.products.remove(product)
+        except ValueError:
+            return False
+
+        return True
 
     def _write(self) -> None:
         products = wanted.to_json(self.products)
