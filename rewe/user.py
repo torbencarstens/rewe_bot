@@ -64,6 +64,14 @@ class User:
         self._write()
         self._upload()
 
+    def remove_offer_key(self, product_key: str) -> bool:
+        for product in self.products:
+            if product_key == product.get_name():
+                self.products.remove(product)
+                return True
+
+        return False
+
     def _write(self) -> None:
         products = wanted.to_json(self.products)
         market_id = {"market_id": self.market_id}
