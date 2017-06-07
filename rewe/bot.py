@@ -181,6 +181,17 @@ def add_offer(bot: Bot, update):
     log.debug("Added product %s to user %s", wp.to_json(), user.id)
 
 
+def remove_offer(bot: Bot, update):
+    global log
+    user = get_user(update)
+    log.debug("%s", user.id)
+    to_remove = " ".join(update.message.text.split()[1:])
+
+    if not user.remove_offer_key(to_remove):
+        text = "{} is not listed for this user. Please input the complete name of the product (retrievable via `list_wanted`".format(to_remove)
+        bot.send_message(chat_id=update.message.chat_id, text=text)
+
+
 def set_market_id(bot: Bot, update):
     global log
     log.debug("set_market_id")
@@ -209,6 +220,7 @@ def run(token: str):
     dispatcher.add_handler(CommandHandler("set_market_id", set_market_id))
     dispatcher.add_handler(CommandHandler("status", status))
     dispatcher.add_handler(CommandHandler("add_offer", add_offer))
+    dispatcher.add_handler(CommandHandler("remove_offer", remove_offer))
 
     log.debug("Start polling")
     updater.start_polling()
