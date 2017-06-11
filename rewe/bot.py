@@ -84,7 +84,7 @@ def offers(bot: Bot, update):
     wanted_filename = user.filename
     market_id = user.market_id
     log.debug("Filename: %s | MarketID: %s", wanted_filename, market_id)
-    offers = get(market_id=market_id, wanted_filename=wanted_filename)
+    offers = get(market_id=market_id, wanted_filename=wanted_filename, log_level=log.getEffectiveLevel())
     log.debug("Found %d offers", len(offers))
     for offer in offers:
         products.append(_get_product_printable(offer))
@@ -188,7 +188,8 @@ def remove_offer(bot: Bot, update):
     to_remove = " ".join(update.message.text.split()[1:])
 
     if not user.remove_offer_key(to_remove):
-        text = "{} is not listed for this user. Please input the complete name of the product (retrievable via `list_wanted`".format(to_remove)
+        text = "{} is not listed for this user. Please input the complete name of the product (retrievable via `list_wanted`".format(
+            to_remove)
         bot.send_message(chat_id=update.message.chat_id, text=text)
 
 
