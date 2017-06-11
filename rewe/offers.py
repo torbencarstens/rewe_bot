@@ -93,4 +93,5 @@ class OffersWebsite:
         content = self.get_content()
         outer_soup_products = self.soupify_html(content)
 
-        return [Offer(soup) for soup in outer_soup_products]
+        result = list(set([Offer(soup) for soup in outer_soup_products]))
+        return result
