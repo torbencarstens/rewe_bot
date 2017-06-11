@@ -36,6 +36,15 @@ class Offer(Product):
 
         return single_whitespace_name
 
+    def __eq__(self, other):
+        return self.get_name() == other.get_name()
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def __str__(self):
+        return "[{}] {}".format(self.get_name(), self.get_price())
+
     def get_picture_link(self) -> str:
         link_w_query = self.outer_soup.find('img').get('data-src')
         link = link_w_query
