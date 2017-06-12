@@ -22,6 +22,7 @@ def get_acceptable_offers(*, market_id: str, wanted_filename: str, log_level: st
         for mapping in acceptable_offers_mappings:
             if mapping.lower() in offer.get_name().lower():
                 products.add(offer)
+                break
 
     log.debug("Found %d products.", len(products))
     return products
