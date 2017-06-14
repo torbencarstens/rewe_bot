@@ -95,18 +95,18 @@ class User:
     def _upload(self, *, base_directory: str = None) -> bool:
         if self.market_id or self.products:
             self.log.debug("Upload")
-            self.s3.upload(directory=base_directory)
+            # self.s3.upload(directory=base_directory)
             self.log.debug("Uploaded")
             return True
 
         return False
 
     def _download(self, *, base_directory: str = None):
-        self.s3.download(directory=base_directory)
+        pass  # self.s3.download(directory=base_directory)
 
     def _read(self) -> Dict:
         if not os.path.exists(self.filename):
-            self.s3.exists()
+            pass  # self.s3.exists()
 
         try:
             with open(self.filename, "r") as resource:

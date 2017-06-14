@@ -32,8 +32,8 @@ class S3:
         os.makedirs(self.base_path, exist_ok=True)
         self.log.debug("Created s3 instance for user: {}".format(p_user.id))
 
-        if self.exists():
-            self.download()
+        # if self.exists():
+        #     self.download()
 
     def get_local_filepath(self, directory: str = None, filename: str = None):
         if not directory:
