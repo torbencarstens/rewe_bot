@@ -38,13 +38,13 @@ class WantedProduct(Product):
 
     @classmethod
     def parse_new(cls, *, id: int, input: str):
-        regex = r"(.*?)\s*-\s*\[(.*?)\]"
+        regex = r"(.*?)\s*-\s*\[(.*)\]"
         result = {}
 
         matches = re.findall(regex, input)
         if matches:
             name, mappings_raw = matches[0]
-            mappings = re.split(",\s*", mappings_raw)
+            mappings = re.split(r"[^\\],\s*", mappings_raw)
             mappings = [mapping for mapping in mappings if mapping]
 
             result = {"id": id, "name": name, "mappings": mappings}
