@@ -100,6 +100,43 @@ def offers(bot: Bot, update):
         first = False
 
 
+def why(bot: Bot, update):
+    global log
+    log.debug("list")
+    user = get_user(update)
+    product = " ".join(update.message.text.split()[1:])
+
+    wanted_filename = user.filename
+    market_id = user.market_id
+    log.debug("Filename: %s | MarketID: %s", wanted_filename, market_id)
+    offers = get(market_id=market_id, wanted_filename=wanted_filename, log_level=log.getEffectiveLevel(),
+                 return_reason=True)
+    log.debug("Offers length: %d", len(offers))
+    reason = None
+    used_offer = None
+
+    for offer, wanted in offers:
+        if offer.get_name() == product:
+            print("is")
+            used_offer = offer
+            reason = wanted
+            break
+    if reason:
+        mappings = []
+        for mapping in reason.get_mappings():
+            formatable = "{}"
+            if mapping.lower() in used_offer.get_name().lower():
+                formatable = "*{}*"
+
+            mappings.append(formatable.format(mapping))
+
+        mapping_text = "\[{}]".format(", ".join(mappings))
+        text = "{} - {}".format(reason.get_name(), mapping_text)
+        bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=telegram.ParseMode.MARKDOWN)
+    else:
+        bot.send_message(chat_id=update.message.chat_id, text="Couldn't find {}".format(product))
+
+
 def list_all(bot: Bot, update):
     global log
     log.debug("list_all")
@@ -222,6 +259,7 @@ def run(token: str):
     dispatcher.add_handler(CommandHandler("status", status))
     dispatcher.add_handler(CommandHandler("add_offer", add_offer))
     dispatcher.add_handler(CommandHandler("remove_offer", remove_offer))
+    dispatcher.add_handler(CommandHandler("why", why))
 
     log.debug("Start polling")
     updater.start_polling()
