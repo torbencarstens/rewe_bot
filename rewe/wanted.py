@@ -8,6 +8,34 @@ from .logger import Logger
 from .product import Product
 
 
+def _split_mappings(mapping_raw):
+    escaped = False
+    cont = False
+    split_on = []
+    for idx, char in enumerate(mapping_raw):
+        if cont:
+            cont = False
+            continue
+        if char == "\\":
+            if mapping_raw[idx + 1] == ",":
+                cont = True
+                continue
+
+        if char == ",":
+            split_on.append(idx)
+
+    result = []
+    old_idx = 0
+    print(split_on)
+    for sp_idx, idx in enumerate(split_on):
+        result.append(mapping_raw[old_idx:idx])
+        old_idx = idx + 1
+
+    result.append(mapping_raw[old_idx:])
+
+    return result
+
+
 class WantedProduct(Product):
     def __init__(self, item: Dict, *, log_level: str = "INFO"):
         self.log = Logger("WantedProduct", level=log_level)
@@ -44,8 +72,9 @@ class WantedProduct(Product):
         matches = re.findall(regex, input)
         if matches:
             name, mappings_raw = matches[0]
-            mappings = re.split(r"[^\\],\s*", mappings_raw)
-            mappings = [mapping for mapping in mappings if mapping]
+            # mappings = re.split(r"[^\\],\s*", mappings_raw)
+            # mappings = [mapping for mapping in mappings if mapping]
+            mappings = _split_mappings(mappings_raw)
 
             result = {"id": id, "name": name, "mappings": mappings}
 
