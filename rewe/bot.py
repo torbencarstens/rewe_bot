@@ -1,6 +1,7 @@
 import json
-
+import schedule
 import telegram
+import threading
 from telegram.bot import Bot
 from telegram.ext import CommandHandler, Updater
 
@@ -13,6 +14,7 @@ from .wanted import WantedProduct, WantedProducts
 
 users = []
 log = Logger("bot", level="DEBUG")
+updater = ""
 
 
 def get_token(filename: str = "secrets.json"):
@@ -156,7 +158,7 @@ def is_offer(bot: Bot, update):
 def list_wanted(bot: Bot, update):
     global log
     log.debug("list_wanted")
-    user: User = get_user(update)
+    user = get_user(update)
     wanted_filename = user.filename
     wanted_products = WantedProducts(wanted_filename).get_products()
 
@@ -197,8 +199,48 @@ def status(bot: Bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="[{}] Functional".format(update.message.chat_id))
 
 
+def post_list_update():
+    global log
+    global updater
+    global users
+    log.debug("post_list_update")
+    products = []
+
+    for user in users:
+        wanted_filename = user.filename
+        market_id = user.market_id
+        log.debug("Filename: %s | MarketID: %s", wanted_filename, market_id)
+        offers = get(market_id=market_id, wanted_filename=wanted_filename)
+        log.debug("Found %d offers", len(offers))
+        for offer in offers:
+            products.append(_get_product_printable(offer))
+
+        messages = _split_messages(products)
+
+        log.debug("Send %d messages: %s", len(messages), user.id)
+        first = True
+        for message in messages:
+            sendable = "\n".join(message)
+            updater.bot.send_message(chat_id=user.id, text=sendable, parse_mode=telegram.ParseMode.MARKDOWN,
+                                     disable_web_page_preview=True, disable_notification=not first)
+            first = False
+
+
+def run_scheduler():
+    global updater
+    try:
+        schedule.every().monday.at("06:00").do(post_list_update)
+        # schedule.every().minute.do(post_list_update)
+        while updater is not None:
+            schedule.run_pending()
+    except Exception as e:
+        print(e)
+
+
 def run(token: str):
     global log
+    global updater
+
     log.debug("Start bot")
     updater = Updater(token=token)
     dispatcher = updater.dispatcher
@@ -210,8 +252,12 @@ def run(token: str):
     dispatcher.add_handler(CommandHandler("status", status))
     dispatcher.add_handler(CommandHandler("add_offer", add_offer))
 
+    t = threading.Thread(target=run_scheduler)
+    t.start()
+
     log.debug("Start polling")
     updater.start_polling()
+    updater = None
 
 
 def start():
