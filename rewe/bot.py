@@ -199,7 +199,8 @@ def list_wanted(bot: Bot, update):
 
     log.debug("Send: {}".format(user.id))
     bot.send_message(chat_id=update.message.chat_id,
-                     text="\n".join([product.get_name() for product in wanted_products]),
+                     text="\n".join(
+                         ["{} - {}".format(product.get_name(), product.get_mappings()) for product in wanted_products]),
                      parse_mode=telegram.ParseMode.MARKDOWN)
 
 
