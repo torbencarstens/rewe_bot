@@ -64,6 +64,24 @@ class User:
         self._write()
         self._upload()
 
+    def remove_offer_key(self, product_key: str) -> bool:
+        to_remove = None
+        for product in self.products:
+            if product_key == product.get_name():
+                to_remove = product
+
+        return self.remove_offer(to_remove)
+
+    def remove_offer(self, product: WantedProduct):
+        try:
+            self.products.remove(product)
+        except ValueError:
+            return False
+
+        self._write()
+        self._upload()
+        return True
+
     def _write(self) -> None:
         products = wanted.to_json(self.products)
         market_id = {"market_id": self.market_id}
@@ -77,18 +95,18 @@ class User:
     def _upload(self, *, base_directory: str = None) -> bool:
         if self.market_id or self.products:
             self.log.debug("Upload")
-            self.s3.upload(directory=base_directory)
+            # self.s3.upload(directory=base_directory)
             self.log.debug("Uploaded")
             return True
 
         return False
 
     def _download(self, *, base_directory: str = None):
-        self.s3.download(directory=base_directory)
+        pass  # self.s3.download(directory=base_directory)
 
     def _read(self) -> Dict:
         if not os.path.exists(self.filename):
-            self.s3.exists()
+            pass  # self.s3.exists()
 
         try:
             with open(self.filename, "r") as resource:

@@ -32,6 +32,9 @@ class S3:
         os.makedirs(self.base_path, exist_ok=True)
         self.log.debug("Created s3 instance for user: {}".format(p_user.id))
 
+        # if self.exists():
+        #     self.download()
+
     def get_local_filepath(self, directory: str = None, filename: str = None):
         if not directory:
             directory = self.base_path
@@ -82,8 +85,11 @@ class S3:
 
         self.log.debug("Does %s exist?", name)
         try:
-            self.download()
+            import random
+            import string
+            self.download(filename="/tmp/{}".format("".join([x for x in random.choices(string.ascii_letters, k=20)])))
             self.log.debug("Downloaded %s for user: %s", name, self.user.id)
+            exists = True
         except ClientError as ce:
             exists = not "Not Found" in str(ce)
             self.log.debug("Remote file %s not found in remote for user: %s", name, self.user.id)
