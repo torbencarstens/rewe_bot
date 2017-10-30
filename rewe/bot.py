@@ -148,7 +148,6 @@ def is_offer(bot: Bot, update):
             found = True
             bot.send_message(chat_id=update.message.chat_id, text=_get_product_printable_np(name, price),
                              parse_mode=telegram.ParseMode.MARKDOWN)
-            break
 
     if not found:
         log.debug("Not found | Send: %s", user.id)
