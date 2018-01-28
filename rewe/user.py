@@ -2,7 +2,7 @@ import json
 import os
 from typing import List, Dict
 
-from . import s3, wanted
+from . import wanted
 from .logger import Logger
 from .wanted import WantedProduct, WantedProducts
 
@@ -19,8 +19,7 @@ class User:
         self.log.debug("Create user: %s", id)
 
         self.id = id
-        self.s3 = s3.S3(self, log_level=log_level)
-        self.filename = self.s3.get_local_filepath(directory=self.base)
+        self.filename = str(id)
         self.log.debug("Filename(%s) for user: %s", self.filename, id)
         self._read()
         self.log.debug("Successfully read from %s for user: %s", self.filename, id)
@@ -62,7 +61,6 @@ class User:
         self.products.append(product)
         # TODO: do this in a certain interval
         self._write()
-        self._upload()
 
     def remove_offer_key(self, product_key: str) -> bool:
         to_remove = None
@@ -79,7 +77,6 @@ class User:
             return False
 
         self._write()
-        self._upload()
         return True
 
     def _write(self) -> None:
@@ -92,22 +89,7 @@ class User:
         with open(self.filename, "w") as resource:
             json.dump(complete, resource, indent=2)
 
-    def _upload(self, *, base_directory: str = None) -> bool:
-        if self.market_id or self.products:
-            self.log.debug("Upload")
-            # self.s3.upload(directory=base_directory)
-            self.log.debug("Uploaded")
-            return True
-
-        return False
-
-    def _download(self, *, base_directory: str = None):
-        pass  # self.s3.download(directory=base_directory)
-
     def _read(self) -> Dict:
-        if not os.path.exists(self.filename):
-            pass  # self.s3.exists()
-
         try:
             with open(self.filename, "r") as resource:
                 return json.load(resource)
