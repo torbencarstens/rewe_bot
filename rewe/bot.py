@@ -1,7 +1,8 @@
 import json
+import threading
+
 import schedule
 import telegram
-import threading
 from telegram.bot import Bot
 from telegram.ext import CommandHandler, Updater
 
@@ -19,9 +20,16 @@ updater = ""
 
 def get_token(filename: str = "secrets.json"):
     global log
+    import os
+
     log.debug("get_token")
-    with open(filename, "r+") as secrets:
-        token = json.load(secrets)['token']
+    try:
+        with open(filename, "r+") as secrets:
+            token = json.load(secrets)['token']
+    except OSError:
+        token = ""
+
+    token = os.getenv("TELEGRAM_BOT_TOKEN", token)
 
     log.debug("Token length: %d", len(token))
     return token
